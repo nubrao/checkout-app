@@ -1,13 +1,23 @@
 'use client';
 
 import { Geist } from "next/font/google";
-import { App } from 'antd';
-import AuthProvider from '@/contexts/AuthContext';
+import { App, ConfigProvider } from 'antd';
+import { ThemeProvider } from 'next-themes';
+import StyledComponentsRegistry from '@/lib/AntdRegistry';
+import styles from '@/app/checkout/Checkout.module.css';
 import "./globals.css";
 
 const geist = Geist({
     subsets: ["latin"],
 });
+
+function RootLayoutContent({ children }: { children: React.ReactNode }) {
+    return (
+        <StyledComponentsRegistry>
+            <App>{children}</App>
+        </StyledComponentsRegistry>
+    );
+}
 
 export default function RootLayout({
     children,
@@ -15,13 +25,13 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <body className={geist.className}>
-                <App>
-                    <AuthProvider>
+                <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
+                    <RootLayoutContent>
                         {children}
-                    </AuthProvider>
-                </App>
+                    </RootLayoutContent>
+                </ThemeProvider>
             </body>
         </html>
     );

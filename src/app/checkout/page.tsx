@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Card, Typography, Radio, Space, Checkbox, Divider, Row, Col, App } from 'antd';
+import { Form, Input, Button, Card, Typography, Radio, Space, Checkbox, Divider, Row, Col, App, ConfigProvider } from 'antd';
 import { useRouter } from 'next/navigation';
 import LoadingScreen from '@/components/LoadingScreen/LoadingScreen';
 import { AuthGuard } from '@/guards/AuthGuard';
 import TermsModal from '@/components/TermsModal/TermsModal';
 import type { CheckoutData, PaymentMethod, CartItem } from '@/types/checkout';
 import styles from './Checkout.module.css';
+import { LeftOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 
 const { Title, Text } = Typography;
 
@@ -102,18 +104,37 @@ const CheckoutPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!form) return; // Add this check
+
+        const userInfo = localStorage.getItem('user-info');
+        if (userInfo) {
+            try {
+                const userData = JSON.parse(userInfo);
+                form.setFieldsValue({
+                    name: userData.fullName || '',
+                    email: userData.email || '',
+                    phone: userData.phone || '',
+                    address: userData.address || '',
+                    city: userData.city || '',
+                    zipcode: userData.zipcode || '',
+                });
+            } catch (error) {
+                console.error("Error parsing user info:", error);
+            }
+        }
+
+        // Existing checkout data loading logic
         const savedData = localStorage.getItem('checkout-data');
         if (savedData) {
             try {
                 const parsedData: CheckoutData = JSON.parse(savedData);
                 setCheckoutData(parsedData);
             } catch (error) {
-                console.error("Erro ao fazer parse do savedData:", error);
+                console.error("Error parsing checkout data:", error);
             }
             setLoading(false);
         }
-        console.log(savedData);
-        
+
         const fetchCheckoutData = async () => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_PROXY_URL}/api/shared/data`, {
@@ -135,7 +156,7 @@ const CheckoutPage: React.FC = () => {
         };
 
         fetchCheckoutData();
-    }, [message]);
+    }, [form, message]); // Add form to dependency array
 
     if (loading) {
         return <LoadingScreen />;
@@ -180,13 +201,28 @@ const CheckoutPage: React.FC = () => {
 
     return (
         <AuthGuard>
-            <main className={styles.checkoutPage}>
-                <Title level={1}>Checkout</Title>
+            <main className={styles.checkoutContainer} role="main">
+                <Link
+                    href={process.env.NEXT_PUBLIC_MAIN_APP_URL || '/'}
+                    className={styles.backLink}
+                    aria-label="Return to main site"
+                >
+                    <LeftOutlined /> Back to site
+                </Link>
 
-                <Row gutter={[24, 24]}>
+                <Title level={1} aria-label="Checkout page">Checkout</Title>
+
+                <Row gutter={[24, 24]} align="stretch">
                     <Col xs={24} lg={16}>
-                        <section aria-label="Billing Information">
-                            <Card title={<Title level={2} className={styles.cardTitle}>Billing Details</Title>}>
+                        <section aria-labelledby="billing-details-title">
+                            <Card
+                                className={styles.card}
+                                title={
+                                    <Title level={2} id="billing-details-title" className={styles.cardTitle}>
+                                        Billing Details
+                                    </Title>
+                                }
+                            >
                                 <Form
                                     form={form}
                                     layout="vertical"
@@ -293,14 +329,51 @@ const CheckoutPage: React.FC = () => {
                                             <PaymentMethodContent method={paymentMethod} />
                                         </div>
                                     </div>
+
+                                    <div className={styles.termsCheckbox}>
+                                        <Checkbox
+                                            checked={termsAccepted}
+                                            onChange={(e) => setTermsAccepted(e.target.checked)}
+                                        >
+                                            I've read and accept the {' '}
+                                            <a
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    setIsTermsModalOpen(true);
+                                                }}
+                                                href="#"
+                                            >
+                                                terms & conditions
+                                            </a>
+                                        </Checkbox>
+                                    </div>
+
+                                    <Button
+                                        type="primary"
+                                        size="large"
+                                        htmlType="submit"
+                                        block
+                                        className={styles.orderSubmit}
+                                        disabled={!termsAccepted || isProcessing}
+                                        loading={isProcessing}
+                                    >
+                                        {isProcessing ? 'Processing...' : 'Place order'}
+                                    </Button>
                                 </Form>
                             </Card>
                         </section>
                     </Col>
 
                     <Col xs={24} lg={8}>
-                        <aside aria-label="Order Summary">
-                            <Card title={<Title level={2} className={styles.cardTitle}>Order Summary</Title>}>
+                        <aside aria-labelledby="order-summary-title">
+                            <Card
+                                className={styles.card}
+                                title={
+                                    <Title level={2} id="order-summary-title" className={styles.cardTitle}>
+                                        Order Summary
+                                    </Title>
+                                }
+                            >
                                 <div className={styles.orderSummary}>
                                     <div className={styles.orderCol}>
                                         <Text strong>PRODUCT</Text>
@@ -338,46 +411,28 @@ const CheckoutPage: React.FC = () => {
                                     </div>
 
                                     <Divider />
-
-                                    <div className={styles.termsCheckbox}>
-                                        <Checkbox
-                                            checked={termsAccepted}
-                                            onChange={(e) => setTermsAccepted(e.target.checked)}
-                                        >
-                                            I've read and accept the {' '}
-                                            <a
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    setIsTermsModalOpen(true);
-                                                }}
-                                                href="#"
-                                            >
-                                                terms & conditions
-                                            </a>
-                                        </Checkbox>
-                                    </div>
-
-                                    <Button
-                                        type="primary"
-                                        size="large"
-                                        block
-                                        onClick={() => form.submit()}
-                                        className={styles.orderSubmit}
-                                        disabled={!termsAccepted || isProcessing}
-                                        loading={isProcessing}
-                                    >
-                                        {isProcessing ? 'Processing...' : 'Place order'}
-                                    </Button>
                                 </div>
                             </Card>
                         </aside>
                     </Col>
                 </Row>
 
-                <TermsModal
-                    open={isTermsModalOpen}
-                    onClose={() => setIsTermsModalOpen(false)}
-                />
+                <ConfigProvider
+                    theme={{
+                        token: {
+                            colorPrimary: '#1890ff',
+                            borderRadius: 8,
+                            colorBgContainer: 'var(--component-background)',
+                            colorText: 'var(--text-color)',
+                            colorTextSecondary: 'var(--text-secondary)',
+                        },
+                    }}
+                >
+                    <TermsModal
+                        open={isTermsModalOpen}
+                        onClose={() => setIsTermsModalOpen(false)}
+                    />
+                </ConfigProvider>
             </main>
         </AuthGuard>
     );
