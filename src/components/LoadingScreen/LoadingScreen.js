@@ -19,7 +19,7 @@ const LoadingScreen = () => {
                         <LoadingOutlined
                             style={{
                                 fontSize: 48,
-                                color: '#1890ff'
+                                color: '#D10024'
                             }}
                             spin
                         />
