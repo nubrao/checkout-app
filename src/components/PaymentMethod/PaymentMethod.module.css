@@ -1,0 +1,65 @@
+.pixInfo {
+    text-align: center;
+    padding: 24px;
+}
+
+.qrCodePlaceholder {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 16px;
+    background: #e8e8e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #666;
+    font-size: 14px;
+    padding: 16px;
+    text-align: center;
+}
+
+.cardFields {
+    margin-top: 16px;
+    padding: 16px;
+}
+
+.paymentMethod {
+    margin: 24px 0;
+    margin-top: 2rem;
+}
+
+.paymentOptions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.paymentList {
+    width: 100%;
+}
+
+.paymentDescription {
+    margin-left: 24px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.paymentContent {
+    margin-top: 24px;
+    padding: 16px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .paymentDescription {
+        margin-left: 20px;
+        font-size: 12px;
+    }
+
+    .cardFields {
+        padding: 8px;
+    }
+}

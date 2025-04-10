@@ -1,0 +1,33 @@
+.lightTheme {
+    --bg-color: #f5f5f5;
+    --component-bg: #ffffff;
+    --text-color: #262626;
+    --text-secondary: #595959;
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --primary-color: #D10024;
+}
+
+.darkTheme {
+    --bg-color: #141414;
+    --component-bg: #1f1f1f;
+    --text-color: #e6e6e6;
+    --text-secondary: #a6a6a6;
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --primary-color: #ff4d4f;
+}
+
+@media (forced-colors: active) {
+
+    .orderSubmit,
+    .qrCodePlaceholder {
+        border: 2px solid ButtonText;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .orderSubmit,
+    .backLink {
+        transition: none;
+    }
+}

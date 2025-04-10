@@ -1,0 +1,120 @@
+.checkoutContainer {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: 100vh;
+    background-color: var(--bg-color);
+}
+
+.card {
+    background: var(--component-bg, #ffffff) !important;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+}
+
+.cardTitle {
+    color: var(--text-color, #262626) !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    transition: color 0.2s ease;
+}
+
+.backLink:hover {
+    color: var(--colorPrimary);
+}
+
+.orderSummary {
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 1rem;
+}
+
+.orderCol {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #E4E7ED;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.orderProducts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 1.5rem 0;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.itemPrice {
+    font-weight: 500;
+}
+
+.orderTotal {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.termsCheckbox {
+    margin: 24px 0;
+    margin: 1rem 0;
+}
+
+.orderSubmit {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    color: #FFF;
+    text-transform: uppercase;
+    font-weight: 700;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.2s all;
+    height: 48px;
+    font-size: 16px;
+    background: #D10024;
+    border-color: #D10024;
+    margin-top: 1rem;
+}
+
+.orderSubmit:hover:not(:disabled) {
+    background: #ff1a1a;
+    border-color: #ff1a1a;
+}
+
+.orderSubmit:disabled {
+    background: #f5f5f5;
+    border-color: #d9d9d9;
+    color: rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 768px) {
+    .checkoutContainer {
+        padding: 1rem;
+    }
+
+    .orderSummary {
+        padding: 0.5rem;
+    }
+
+    .orderTotal {
+        font-size: 18px;
+    }
+
+    .orderSubmit {
+        height: 40px;
+        font-size: 14px;
+    }
+}
