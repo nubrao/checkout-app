@@ -7,6 +7,8 @@ import Link from 'next/link';
 import PaymentMethodContent from '../PaymentMethod/PaymentMethodContent';
 import type { FormValues, PaymentMethod, CheckoutData, CartItem } from '@/types/checkout';
 import styles from './Checkout.module.css';
+import { useRouter } from 'next/navigation';
+import type { FormInstance } from 'antd';
 
 const { Title, Text } = Typography;
 
@@ -14,15 +16,22 @@ interface CheckoutPageProps {
     checkoutData: CheckoutData | null;
     loading: boolean;
     onSubmit: (values: FormValues) => Promise<void>;
-    form: any;
+    form: FormInstance;
 }
 
-const CheckoutPage: React.FC<CheckoutPageProps> = ({ checkoutData, loading, onSubmit, form }) => {
+const CheckoutPage: React.FC<CheckoutPageProps> = ({
+    checkoutData,
+    loading,
+    onSubmit,
+    form
+}) => {
+    const router = useRouter();
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod['type']>('credit');
     const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
     const [isTermsModalOpen, setIsTermsModalOpen] = useState<boolean>(false);
     const { message } = App.useApp();
+    const [isNavigating, setIsNavigating] = useState(false);
 
     const calculateItemTotal = (item: CartItem): number => {
         return item.price * (item.quantity || 1);
@@ -33,14 +42,36 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ checkoutData, loading, onSu
         return checkoutData.cartItems.reduce((total, item) => total + calculateItemTotal(item), 0);
     };
 
+    const handleBackToStore = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        const mainAppUrl = process.env.NEXT_PUBLIC_MAIN_APP_URL;
+
+        if (!mainAppUrl) {
+            console.error('Main app URL not configured');
+            message.error('Unable to redirect to store. Please try again later.');
+            return;
+        }
+
+        try {
+            setIsNavigating(true);
+            window.location.href = mainAppUrl;
+        } catch (error) {
+            console.error('Error redirecting to store:', error);
+            message.error('Failed to redirect to store. Please try again.');
+            setIsNavigating(false);
+        }
+    };
+
     return (
         <main className={styles.checkoutContainer} role="main">
             <Link
-                href={process.env.NEXT_PUBLIC_MAIN_APP_URL || '/'}
-                className={styles.backLink}
+                href="#"
+                className={`${styles.backLink} ${isNavigating ? styles.disabled : ''}`}
+                onClick={handleBackToStore}
                 aria-label="Return to main site"
+                aria-disabled={isNavigating}
             >
-                <LeftOutlined /> Back to site
+                <LeftOutlined /> {isNavigating ? 'Redirecting...' : 'Back to store'}
             </Link>
 
             <Title level={1}>Checkout</Title>

@@ -30,6 +30,12 @@
     color: var(--colorPrimary);
 }
 
+.backLink.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
 .orderSummary {
     margin: 15px 0;
     display: flex;
