@@ -67,6 +67,11 @@
     font-weight: 500;
 }
 
+.itemPrice:global(.ant-typography) {
+    word-break: normal !important;
+    padding-left: 4px;
+}
+
 .orderTotal {
     color: var(--primary-color);
     font-size: 1.25rem;
