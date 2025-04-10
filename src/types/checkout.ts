@@ -14,15 +14,9 @@ export interface CheckoutData {
     timestamp: number;
 }
 
-export type PaymentMethod = {
+export interface PaymentMethod {
     type: 'credit' | 'debit' | 'pix';
-    details?: {
-        cardNumber?: string;
-        expiryDate?: string;
-        cvv?: string;
-        cardName?: string;
-    };
-};
+}
 
 export interface FormValues {
     name: string;

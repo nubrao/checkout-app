@@ -1,54 +1,49 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { App } from 'antd';
 import LoadingScreen from '@/components/LoadingScreen/LoadingScreen';
 
-interface AuthData {
-    token: string;
-    user: {
-        id: number;
-        email: string;
-        username: string;
-    };
-    timestamp: number;
+interface AuthGuardProps {
+    children: React.ReactNode;
 }
 
-export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+export const AuthGuard = ({ children }: AuthGuardProps) => {
+    const [isValidating, setIsValidating] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const { message } = App.useApp();
 
     useEffect(() => {
         const validateAuth = () => {
             try {
-                const authToken = localStorage.getItem('auth-token');
-                const authData = localStorage.getItem('auth-data');
+                setTimeout(() => {
+                    const authToken = localStorage.getItem('auth-token');
+                    const userInfo = localStorage.getItem('user-info');
+                    console.log('Auth Check:', { hasToken: !!authToken, hasData: !!userInfo });
 
-                if (!authToken || !authData) {
-                    throw new Error('Not authenticated');
-                }
+                    if (!authToken || !userInfo) {
+                        throw new Error('Authentication required');
+                    }
 
-                const parsedAuthData = JSON.parse(authData) as AuthData;
-                const isExpired = Date.now() - parsedAuthData.timestamp > 24 * 60 * 60 * 1000;
-
-                if (isExpired) {
-                    localStorage.removeItem('auth-token');
-                    localStorage.removeItem('auth-data');
-                    throw new Error('Session expired');
-                }
-
-                setIsAuthenticated(true);
+                    setIsAuthenticated(true);
+                    setIsValidating(false);
+                }, 2000);
             } catch (error) {
-                const errorMessage = error instanceof Error ? error.message : 'Authentication failed';
-                message.error(errorMessage);
-                window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/login`;
+                console.error('Auth Error:', error);
+                message.error('Please login to continue');
+                window.location.replace(process.env.NEXT_PUBLIC_MAIN_APP_URL);
             }
         };
 
         validateAuth();
     }, [message]);
 
-    if (!isAuthenticated) {
+    if (isValidating) {
         return <LoadingScreen />;
+    }
+
+    if (!isAuthenticated) {
+        return null;
     }
 
     return <>{children}</>;

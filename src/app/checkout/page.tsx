@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Card, Typography, Radio, Space, Checkbox, Divider, Row, Col, App } from 'antd';
 import { useRouter } from 'next/navigation';
-import type { CheckoutData, PaymentMethod } from '../../types/checkout';
-import styles from '../checkout/Checkout.module.css';
-import TermsModal from '../../components/TermsModal/TermsModal';
-import { CartItem } from '../../types/checkout';
+import LoadingScreen from '@/components/LoadingScreen/LoadingScreen';
 import { AuthGuard } from '@/guards/AuthGuard';
+import TermsModal from '@/components/TermsModal/TermsModal';
+import type { CheckoutData, PaymentMethod, CartItem } from '@/types/checkout';
+import styles from './Checkout.module.css';
 
 const { Title, Text } = Typography;
 
@@ -99,37 +99,47 @@ const CheckoutPage: React.FC = () => {
     const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
     const [isTermsModalOpen, setIsTermsModalOpen] = useState<boolean>(false);
     const [checkoutData, setCheckoutData] = useState<CheckoutData | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const savedCheckoutData = localStorage.getItem('checkout-data');
-
-        if (!savedCheckoutData) {
-            message.error('No checkout data found');
-            window.location.href = process.env.NEXT_PUBLIC_MAIN_APP_URL || 'http://localhost:3000';
-            return;
-        }
-
-        try {
-            const parsedData = JSON.parse(savedCheckoutData) as CheckoutData;
-
-            // Validate cart items
-            if (!parsedData.cartItems?.length) {
-                throw new Error('Cart is empty');
+        const savedData = localStorage.getItem('checkout-data');
+        if (savedData) {
+            try {
+                const parsedData: CheckoutData = JSON.parse(savedData);
+                setCheckoutData(parsedData);
+            } catch (error) {
+                console.error("Erro ao fazer parse do savedData:", error);
             }
-
-            if (Date.now() - parsedData.timestamp > 30 * 60 * 1000) {
-                localStorage.removeItem('checkout-data');
-                throw new Error('Checkout session expired');
-            }
-
-            setCheckoutData(parsedData);
-        } catch (error) {
-            console.error('Invalid checkout data:', error);
-            localStorage.removeItem('checkout-data');
-            message.error('Invalid checkout data');
-            window.location.href = process.env.NEXT_PUBLIC_MAIN_APP_URL || 'http://localhost:3000';
+            setLoading(false);
         }
+        console.log(savedData);
+        
+        const fetchCheckoutData = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_PROXY_URL}/api/shared/data`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (!data?.cart) {
+                    throw new Error('No checkout data found');
+                }
+
+                setCheckoutData(data.cart);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching checkout data:', error);
+                message.error('Failed to load checkout data');
+                window.location.replace(process.env.NEXT_PUBLIC_MAIN_APP_URL);
+            }
+        };
+
+        fetchCheckoutData();
     }, [message]);
+
+    if (loading) {
+        return <LoadingScreen />;
+    }
 
     const calculateItemTotal = (item: CartItem): number => {
         return (parseFloat(String(item.price)) || 0) * (parseInt(String(item.quantity)) || 0);
@@ -150,16 +160,13 @@ const CheckoutPage: React.FC = () => {
             setIsProcessing(true);
             const loadingMessage = message.loading('Processing your order...', 0);
 
-            // Simulate processing delay
             await new Promise(resolve => setTimeout(resolve, 2000));
 
-            // Clear checkout data
             localStorage.removeItem('checkout-data');
 
             loadingMessage();
             message.success('Order placed successfully! Thank you for your purchase.');
 
-            // Redirect back to main app
             setTimeout(() => {
                 window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/account`;
             }, 1000);
