@@ -18,6 +18,7 @@ const HomePage: React.FC = () => {
     useEffect(() => {
         const fetchCheckoutData = async () => {
             try {
+                setLoading(true);
                 const response = await fetch(`${process.env.NEXT_PUBLIC_PROXY_URL}/api/shared/data`, {
                     credentials: 'include'
                 });
@@ -42,12 +43,12 @@ const HomePage: React.FC = () => {
                         zipcode: userData.address.zipcode
                     });
                 }
-
-                setLoading(false);
             } catch (error) {
                 console.error('Error fetching checkout data:', error);
                 message.error('Failed to load checkout data');
                 window.location.href = process.env.NEXT_PUBLIC_MAIN_APP_URL || 'http://localhost:8080';
+            } finally {
+                setLoading(false);
             }
         };
 

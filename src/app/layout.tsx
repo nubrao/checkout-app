@@ -1,10 +1,11 @@
 'use client';
 
+import React, { Suspense } from 'react';
 import { Geist } from "next/font/google";
 import { App, ConfigProvider } from 'antd';
 import { ThemeProvider } from 'next-themes';
 import StyledComponentsRegistry from '@/lib/AntdRegistry';
-import styles from '@/app/checkout/Checkout.module.css';
+import LoadingScreen from '@/components/LoadingScreen/LoadingScreen';
 import "./globals.css";
 
 const geist = Geist({
@@ -14,7 +15,20 @@ const geist = Geist({
 function RootLayoutContent({ children }: { children: React.ReactNode }) {
     return (
         <StyledComponentsRegistry>
-            <App>{children}</App>
+            <ConfigProvider
+                theme={{
+                    token: {
+                        colorPrimary: '#1890ff',
+                        borderRadius: 8,
+                    }
+                }}
+            >
+                <App>
+                    <Suspense fallback={<LoadingScreen />}>
+                        {children}
+                    </Suspense>
+                </App>
+            </ConfigProvider>
         </StyledComponentsRegistry>
     );
 }
@@ -27,7 +41,7 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body className={geist.className}>
-                <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
+                <ThemeProvider attribute="data-theme" defaultTheme="system">
                     <RootLayoutContent>
                         {children}
                     </RootLayoutContent>
