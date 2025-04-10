@@ -1,0 +1,275 @@
+.section {
+    padding: 30px 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.sectionTitle {
+    margin-bottom: 30px;
+}
+
+.sectionTitle h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    color: #2B2D42;
+}
+
+.billingDetails,
+.orderDetails {
+    background: #fff;
+    padding: 30px;
+    border: 1px solid #E4E7ED;
+    border-radius: 8px;
+}
+
+.orderDetails {
+    position: relative;
+    background: #fff;
+    border-radius: 8px;
+}
+
+.orderSummary {
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.orderCol {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #E4E7ED;
+}
+
+.orderCol:last-child {
+    border-top: 2px solid #E4E7ED;
+    border-bottom: none;
+    margin-top: 15px;
+    padding-top: 15px;
+}
+
+.orderTotal {
+    color: #D10024;
+    font-size: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+}
+
+.paymentMethod {
+    margin: 24px 0;
+}
+
+.paymentOptions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.orderSubmit {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #D10024;
+    color: #FFF;
+    text-transform: uppercase;
+    font-weight: 700;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.2s all;
+    height: 48px;
+    font-size: 16px;
+    background: #D10024;
+    border-color: #D10024;
+}
+
+.orderSubmit:hover {
+    opacity: 0.9;
+}
+
+.orderSubmit:hover:not(:disabled) {
+    background: #ff1a1a;
+    border-color: #ff1a1a;
+}
+
+.orderSubmit:disabled {
+    background: #f5f5f5;
+    border-color: #d9d9d9;
+    color: rgba(0, 0, 0, 0.25);
+}
+
+.checkoutPage {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.checkoutPage h1 {
+    margin-bottom: 24px;
+    color: #2B2D42;
+}
+
+.orderItems {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.orderItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.orderItem :global(.ant-typography) {
+    margin: 0;
+}
+
+.checkoutButton {
+    margin-top: 16px;
+    height: 48px;
+    font-size: 16px;
+    background: #D10024;
+    border-color: #D10024;
+}
+
+.cardTitle {
+    margin-top: 8px !important;
+}
+
+.itemPrice:global(.ant-typography) {
+    word-break: normal !important;
+    padding-left: 4px;
+}
+
+.checkoutButton:hover:not(:disabled) {
+    background: #ff1a1a;
+    border-color: #ff1a1a;
+}
+
+.orderProducts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.paymentList {
+    width: 100%;
+}
+
+.paymentDescription {
+    margin-left: 24px;
+    color: #8D99AE;
+    font-size: 13px;
+}
+
+.termsCheckbox {
+    margin: 24px 0;
+}
+
+.paymentContent {
+    margin-top: 24px;
+    padding: 16px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+.cardFields {
+    padding: 16px;
+}
+
+.pixInfo {
+    text-align: center;
+    padding: 24px;
+}
+
+.qrCodePlaceholder {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 16px;
+    background: #e8e8e8;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    border-radius: 8px;
+    color: #666;
+    font-size: 14px;
+    padding: 16px;
+    text-align: center;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+
+    .billingDetails,
+    .orderDetails {
+        margin-bottom: 30px;
+    }
+
+    .checkoutPage {
+        padding: 16px;
+    }
+
+    .checkoutPage h1 {
+        font-size: 24px;
+        margin-bottom: 16px;
+    }
+
+    .orderTotal {
+        font-size: 18px;
+    }
+
+    .paymentDescription {
+        margin-left: 20px;
+        font-size: 12px;
+    }
+
+    .orderSubmit {
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .cardFields {
+        padding: 8px;
+    }
+}
+
+/* High Contrast Mode */
+@media (forced-colors: active) {
+    .checkoutButton {
+        border: 1px solid ButtonText;
+    }
+
+    .orderCol {
+        border-color: ButtonText;
+    }
+
+    .orderSubmit {
+        border: 2px solid ButtonText;
+    }
+
+    .qrCodePlaceholder {
+        border: 1px solid ButtonText;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .checkoutButton {
+        transition: none;
+    }
+
+    .orderSubmit {
+        transition: none;
+    }
+}
